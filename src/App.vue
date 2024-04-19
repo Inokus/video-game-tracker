@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router';
+import useGamesStore from './stores/games';
+import GameAddition from './components/GameAddition.vue';
+
+useGamesStore();
 </script>
 
 <template>
@@ -10,6 +14,7 @@ import { RouterLink, RouterView } from 'vue-router';
       <RouterLink to="/completed">Completed</RouterLink>
       <RouterLink to="/wishlist">Wishlist</RouterLink>
     </nav>
+    <GameAddition />
   </header>
   <main>
     <RouterView />
