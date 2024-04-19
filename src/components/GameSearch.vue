@@ -105,7 +105,7 @@ async function getResults() {
     <button type="submit">Search</button>
   </form>
   <div class="games" v-if="gamesStore.searchResults && gamesStore.searchResults.length > 0">
-    <div class="img-div" v-for="(result, index) in gamesStore.searchResults" :key="index">
+    <div v-for="(result, index) in gamesStore.searchResults" :key="index">
       <GameCard :game="result" @click="gamesStore.selectGame(result)" />
     </div>
   </div>

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { ref, watch } from 'vue';
-import type { Game } from '../types/index';
+import { ref, computed, watch } from 'vue';
+import type { Game, Category } from '../types/index';
 
 const useGamesStore = defineStore('games', () => {
   const storedGames = ref<Game[] | null>(null);
@@ -47,10 +47,30 @@ const useGamesStore = defineStore('games', () => {
     storedGames.value?.push(game);
   };
 
+  const filterByCategory = (category: Category) => {
+    return storedGames.value?.filter(game => game.category === category);
+  };
+
   watch(storedGames, () => updateStorage(), { deep: true });
+
   getStorage();
 
-  return { storedGames, searchResults, selectedGame, selectGame, deselectGame, isNewGame, addGame };
+  const backlogGames = computed(() => filterByCategory('backlog'));
+  const completedGames = computed(() => filterByCategory('completed'));
+  const wishlistGames = computed(() => filterByCategory('wishlist'));
+
+  return {
+    storedGames,
+    searchResults,
+    selectedGame,
+    backlogGames,
+    completedGames,
+    wishlistGames,
+    selectGame,
+    deselectGame,
+    isNewGame,
+    addGame
+  };
 });
 
 export default useGamesStore;
