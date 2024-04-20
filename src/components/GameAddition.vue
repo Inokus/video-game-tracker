@@ -5,22 +5,18 @@ import useOptionsStore from '../stores/options';
 import GameSearch from './GameSearch.vue';
 import AutoAdditionForm from './AutoAdditionForm.vue';
 import ManualAdditionForm from './ManualAdditionForm.vue';
+import ModalDialog from './ModalDialog.vue';
 
 const gamesStore = useGamesStore();
 const optionsStore = useOptionsStore();
 
-const modal = ref<HTMLDialogElement | null>(null);
-
-const closeModal = () => {
-  modal.value?.close();
-};
+const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
 </script>
 
 <template>
   <button type="button" @click="modal?.showModal">Add game</button>
 
-  <dialog ref="modal">
-    <button type="button" @click="closeModal">X</button>
+  <ModalDialog ref="modal">
     <div v-if="!gamesStore.selectedGame">
       <div>
         <input
@@ -50,5 +46,5 @@ const closeModal = () => {
     <div v-else>
       <AutoAdditionForm />
     </div>
-  </dialog>
+  </ModalDialog>
 </template>

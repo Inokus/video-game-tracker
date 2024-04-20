@@ -54,6 +54,10 @@ const useGamesStore = defineStore('games', () => {
     }
   };
 
+  const removeAllGames = () => {
+    storedGames.value = [];
+  };
+
   const filterByCategory = (category: Category) => {
     return storedGames.value?.filter(game => game.category === category);
   };
@@ -77,7 +81,8 @@ const useGamesStore = defineStore('games', () => {
     deselectGame,
     isNewGame,
     addGame,
-    removeGame
+    removeGame,
+    removeAllGames
   };
 });
 
