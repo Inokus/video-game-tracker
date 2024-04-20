@@ -47,6 +47,13 @@ const useGamesStore = defineStore('games', () => {
     storedGames.value?.push(game);
   };
 
+  const removeGame = (title: string) => {
+    const index = storedGames.value?.findIndex(game => game.title === title);
+    if (index !== -1 && index !== undefined) {
+      storedGames.value?.splice(index, 1);
+    }
+  };
+
   const filterByCategory = (category: Category) => {
     return storedGames.value?.filter(game => game.category === category);
   };
@@ -69,7 +76,8 @@ const useGamesStore = defineStore('games', () => {
     selectGame,
     deselectGame,
     isNewGame,
-    addGame
+    addGame,
+    removeGame
   };
 });
 

@@ -13,6 +13,7 @@ const props = defineProps({
 const gamesStore = useGamesStore();
 
 const searchInput = ref('');
+const removalEnabled = ref(false);
 
 const selectedGames = computed(() => {
   switch (props.category) {
@@ -35,8 +36,15 @@ const filteredBySearchGames = computed(() => {
 
 <template>
   <input type="text" aria-label="search" v-model="searchInput" />
+  <button type="button" @click="removalEnabled = !removalEnabled">
+    <span v-if="!removalEnabled">Enable removal</span>
+    <span v-else>Disable removal</span>
+  </button>
   <div class="games" v-if="selectedGames && selectedGames.length > 0">
     <div v-for="(game, index) in filteredBySearchGames" :key="index">
+      <button type="button" @click="gamesStore.removeGame(game.title)" v-if="removalEnabled">
+        Remove
+      </button>
       <GameCard :game="game" />
     </div>
   </div>
