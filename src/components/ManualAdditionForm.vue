@@ -2,8 +2,10 @@
 import { ref } from 'vue';
 import type { Game } from '../types/index';
 import useGamesStore from '../stores/games';
+import useOptionsStore from '../stores/options';
 
 const gamesStore = useGamesStore();
+const optionsStore = useOptionsStore();
 
 const initialFormData: Game = {
   title: '',
@@ -27,6 +29,7 @@ const formatData = (): void => {
   const newData = { ...activeFormData.value };
   newData.genres = genresInput.value.split(',').map(genre => genre.trim());
   newData.platforms = platformsInput.value.split(',').map(platform => platform.trim());
+  newData.category = optionsStore.selectedCategory;
   activeFormData.value = newData;
 };
 
@@ -116,7 +119,7 @@ const handleAddGame = () => {
       v-model="activeFormData.criticRating"
     />
     <label for="category">Category</label>
-    <select name="category" id="category" v-model="activeFormData.category">
+    <select name="category" id="category" v-model="optionsStore.selectedCategory">
       <option value="backlog">Backlog</option>
       <option value="completed">Completed</option>
       <option value="wishlist">Wishlist</option>

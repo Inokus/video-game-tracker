@@ -1,5 +1,7 @@
 type Category = 'backlog' | 'completed' | 'wishlist';
 
+type Mode = 'auto' | 'manual';
+
 type Game = {
   title: string;
   // Maybe date type?
@@ -31,4 +33,4 @@ type ResponseGenreOrPlatform = {
   name: string;
 };
 
-export { Category, Game, ResponseGame, ResponseGenreOrPlatform };
+export { Category, Mode, Game, ResponseGame, ResponseGenreOrPlatform };

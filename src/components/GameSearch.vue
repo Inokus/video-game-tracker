@@ -82,7 +82,6 @@ async function getResults() {
 
     if (data.length === 1 && data[0].status) throw new Error(`${data[0].title}`);
 
-    console.log(data);
     formatResults(data);
   } catch (error) {
     console.error(`${error}`);
@@ -120,6 +119,5 @@ async function getResults() {
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
-  line-height: 0;
 }
 </style>

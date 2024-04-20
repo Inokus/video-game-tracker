@@ -13,7 +13,7 @@ defineProps({
   </div>
   <div v-else class="cover">
     <img src="../assets/icons/photo.svg" alt="" class="icon" />
-    <span>{{ game.title }}</span>
+    <p class="title">{{ game.title }}</p>
   </div>
 </template>
 
@@ -27,9 +27,11 @@ defineProps({
   height: 374px;
 }
 
-.cover > span {
+.title {
   position: absolute;
-  bottom: 2rem;
+  bottom: 1rem;
+  width: 100%;
+  text-align: center;
 }
 
 .image {

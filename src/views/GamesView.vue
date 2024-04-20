@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
 import useGamesStore from '../stores/games';
 import GameCard from '../components/GameCard.vue';
 
@@ -11,6 +11,8 @@ const props = defineProps({
 });
 
 const gamesStore = useGamesStore();
+
+const searchInput = ref('');
 
 const selectedGames = computed(() => {
   switch (props.category) {
@@ -24,11 +26,17 @@ const selectedGames = computed(() => {
       return [];
   }
 });
+
+const filteredBySearchGames = computed(() => {
+  const seachTerm = searchInput.value.toLowerCase();
+  return selectedGames.value?.filter(game => game.title.toLowerCase().includes(seachTerm));
+});
 </script>
 
 <template>
+  <input type="text" aria-label="search" v-model="searchInput" />
   <div class="games" v-if="selectedGames && selectedGames.length > 0">
-    <div v-for="(game, index) in selectedGames" :key="index">
+    <div v-for="(game, index) in filteredBySearchGames" :key="index">
       <GameCard :game="game" />
     </div>
   </div>
@@ -42,6 +50,7 @@ const selectedGames = computed(() => {
   justify-content: center;
   flex-wrap: wrap;
   gap: 1rem;
-  line-height: 0;
+
+  /* line-height: 0; */
 }
 </style>
