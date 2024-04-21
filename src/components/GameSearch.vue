@@ -67,7 +67,7 @@ const formatResults = (results: ResponseGame[]) => {
       });
     }
   });
-  gamesStore.searchResults = formattedResults;
+  return formattedResults;
 };
 
 async function getResults() {
@@ -82,7 +82,7 @@ async function getResults() {
 
     if (data.length === 1 && data[0].status) throw new Error(`${data[0].title}`);
 
-    formatResults(data);
+    gamesStore.searchResults = formatResults(data);
   } catch (error) {
     console.error(`${error}`);
   }

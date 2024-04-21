@@ -1,21 +1,22 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-const thisModal = ref<HTMLDialogElement | null>(null);
+const emits = defineEmits(['close']);
 
-const showModal = () => {
-  thisModal.value?.showModal();
-};
+const modal = ref<HTMLDialogElement | null>(null);
+
+const showModal = () => modal.value?.showModal();
 
 const closeModal = () => {
-  thisModal.value?.close();
+  modal.value?.close();
+  emits('close');
 };
 
 defineExpose({ showModal, closeModal });
 </script>
 
 <template>
-  <dialog ref="thisModal">
+  <dialog ref="modal">
     <button type="button" @click="closeModal">X</button>
     <slot></slot>
   </dialog>

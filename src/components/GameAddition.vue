@@ -10,13 +10,29 @@ import ModalDialog from './ModalDialog.vue';
 const gamesStore = useGamesStore();
 const optionsStore = useOptionsStore();
 
-const modal = ref<InstanceType<typeof ModalDialog> | null>(null);
+const gameAdditionModal = ref<InstanceType<typeof ModalDialog> | null>(null);
+const gameAdditionModalVisible = ref(false);
+
+const showGameAdditionModal = () => {
+  gameAdditionModalVisible.value = true;
+  setTimeout(() => {
+    gameAdditionModal.value?.showModal();
+  }, 0);
+};
+
+const hideGameAdditionModal = () => {
+  gamesStore.deselectGame();
+  gameAdditionModalVisible.value = false;
+};
 </script>
 
 <template>
-  <button type="button" @click="modal?.showModal">Add game</button>
-
-  <ModalDialog ref="modal">
+  <button type="button" @click="showGameAdditionModal">Add game</button>
+  <ModalDialog
+    ref="gameAdditionModal"
+    v-if="gameAdditionModalVisible"
+    @close="hideGameAdditionModal"
+  >
     <div v-if="!gamesStore.selectedGame">
       <div>
         <input

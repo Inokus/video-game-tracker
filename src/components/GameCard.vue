@@ -31,7 +31,9 @@ defineProps({
   position: absolute;
   bottom: 1rem;
   width: 100%;
+  height: 4rem;
   text-align: center;
+  overflow: hidden;
 }
 
 .image {
