@@ -1,1 +1,1 @@
-# capstone-project-2
+# video-game-tracker

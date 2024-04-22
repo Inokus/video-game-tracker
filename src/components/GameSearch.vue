@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import type { Game, ResponseGame, ResponseGenreOrPlatform } from '../types/index';
 import useGamesStore from '../stores/games';
 import GameCard from './GameCard.vue';
+import DynamicButton from './DynamicButton.vue';
 
 const gamesStore = useGamesStore();
 
@@ -90,7 +92,7 @@ async function getResults() {
 </script>
 
 <template>
-  <form @submit.prevent="getResults" novalidate>
+  <form class="flex justify-center mb-8" @submit.prevent="getResults" novalidate>
     <input
       type="text"
       name="search"
@@ -99,11 +101,17 @@ async function getResults() {
       placeholder="Enter a game title"
       aria-label="games search"
       required
+      class="h-8 px-4 py-2 rounded-l bg-slate-200"
       v-model="searchInput"
     />
-    <button type="submit">Search</button>
+    <DynamicButton :type="'submit'" :ariaLabel="'search'" :class="'rounded-none rounded-r'">
+      <MagnifyingGlassIcon class="w-6 h-6" />
+    </DynamicButton>
   </form>
-  <div class="games" v-if="gamesStore.searchResults && gamesStore.searchResults.length > 0">
+  <div
+    class="flex-1 flex flex-row flex-wrap justify-center items-center gap-4 py-8"
+    v-if="gamesStore.searchResults && gamesStore.searchResults.length > 0"
+  >
     <div v-for="(result, index) in gamesStore.searchResults" :key="index">
       <GameCard :game="result" @click="gamesStore.selectGame(result)" />
     </div>
@@ -112,12 +120,3 @@ async function getResults() {
     Couldn't find any games matching your search.
   </div>
 </template>
-
-<style scoped>
-.games {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-</style>

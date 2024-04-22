@@ -4,7 +4,6 @@ type Mode = 'auto' | 'manual';
 
 type Game = {
   title: string;
-  // Maybe date type?
   releaseDate: string;
   genres: string[];
   platforms: string[];
