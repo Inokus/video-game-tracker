@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { PlusIcon } from '@heroicons/vue/24/outline';
 import useGamesStore from '../stores/games';
 import useOptionsStore from '../stores/options';
 import GameSearch from './GameSearch.vue';
@@ -28,16 +29,21 @@ const hideGameAdditionModal = () => {
 </script>
 
 <template>
-  <DynamicButton :class="''" :aria-label="'label'" @click="showGameAdditionModal">
-    Add game
+  <DynamicButton
+    :class="'bg-transparent sm:bg-sky-500 sm:text-slate-900 shadow-none sm:shadow text-slate-50'"
+    :aria-label="'add game'"
+    @click="showGameAdditionModal"
+  >
+    <span class="hidden sm:inline">Add game</span>
+    <PlusIcon class="sm:hidden w-6 h-6" />
   </DynamicButton>
   <ModalDialog
-    :class="'w-11/12 h-5/6'"
+    :class="'w-full h-full md:w-3/4 md:h-3/4 lg:w-2/3 lg:h-2/3'"
     ref="gameAdditionModal"
     v-if="gameAdditionModalVisible"
     @close="hideGameAdditionModal"
   >
-    <div class="flex flex-col justify-center items-center gap-8" v-if="!gamesStore.selectedGame">
+    <div class="flex flex-col items-center gap-8 h-full" v-if="!gamesStore.selectedGame">
       <div class="flex gap-8">
         <div>
           <input
@@ -45,6 +51,7 @@ const hideGameAdditionModal = () => {
             name="mode"
             value="auto"
             id="auto"
+            class="mr-2 accent-sky-500"
             v-model="optionsStore.selectedMode"
           />
           <label for="auto">Auto</label>
@@ -55,15 +62,16 @@ const hideGameAdditionModal = () => {
             name="mode"
             value="manual"
             id="manual"
+            class="mr-2 accent-sky-500"
             v-model="optionsStore.selectedMode"
           />
           <label for="manual">Manual</label>
         </div>
       </div>
-      <div v-if="optionsStore.selectedMode === 'auto'">
+      <div class="flex-1 flex flex-col items-center" v-if="optionsStore.selectedMode === 'auto'">
         <GameSearch />
       </div>
-      <div class="h-full" v-else>
+      <div class="flex-1 flex flex-col items-center w-full" v-else>
         <ManualAdditionForm />
       </div>
     </div>

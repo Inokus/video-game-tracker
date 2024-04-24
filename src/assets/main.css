@@ -1,8 +1,25 @@
-@import url('./base.css');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  font-weight: normal;
+}
+
+body {
+  line-height: 1.6;
+  font-family: Montserrat, sans-serif;
+  font-size: 15px;
+  color: #0f172a;
+  transition: 0.2s;
+  text-rendering: optimizelegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 #app {
   min-height: 100vh;

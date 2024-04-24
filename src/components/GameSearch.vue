@@ -92,7 +92,7 @@ async function getResults() {
 </script>
 
 <template>
-  <form class="flex justify-center mb-8" @submit.prevent="getResults" novalidate>
+  <form class="flex" @submit.prevent="getResults" novalidate>
     <input
       type="text"
       name="search"
@@ -104,19 +104,31 @@ async function getResults() {
       class="h-8 px-4 py-2 rounded-l bg-slate-200"
       v-model="searchInput"
     />
-    <DynamicButton :type="'submit'" :ariaLabel="'search'" :class="'rounded-none rounded-r'">
-      <MagnifyingGlassIcon class="w-6 h-6" />
+    <DynamicButton
+      :type="'submit'"
+      :aria-label="'search'"
+      :class="'rounded-none rounded-r bg-sky-500'"
+    >
+      <MagnifyingGlassIcon class="w-6 h-6 text-slate-900" />
     </DynamicButton>
   </form>
   <div
-    class="flex-1 flex flex-row flex-wrap justify-center items-center gap-4 py-8"
+    class="flex-1 flex flex-wrap justify-center items-center gap-4 mt-8 mb-12"
     v-if="gamesStore.searchResults && gamesStore.searchResults.length > 0"
   >
     <div v-for="(result, index) in gamesStore.searchResults" :key="index">
-      <GameCard :game="result" @click="gamesStore.selectGame(result)" />
+      <GameCard
+        :game="result"
+        tabindex="0"
+        @click="gamesStore.selectGame(result)"
+        @keyup.enter="gamesStore.selectGame(result)"
+      />
     </div>
   </div>
-  <div v-else-if="gamesStore.searchResults && gamesStore.searchResults.length === 0">
+  <div
+    class="flex-1 flex justify-center items-center mt-8 mb-12"
+    v-else-if="gamesStore.searchResults && gamesStore.searchResults.length === 0"
+  >
     Couldn't find any games matching your search.
   </div>
 </template>

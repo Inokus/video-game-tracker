@@ -18,11 +18,11 @@ const props = defineProps({
   }
 });
 
-const defaultClasses = 'px-2 py-1 rounded bg-blue-500';
+const defaultClasses = 'px-2 py-1 rounded shadow hover:opacity-90 active:scale-95';
 </script>
 
 <template>
-  <button :type="type" :class="[defaultClasses, props.class]" :ariaLabel="ariaLabel || null">
+  <button :type="type" :class="[defaultClasses, props.class]" :aria-label="ariaLabel || undefined">
     <slot></slot>
   </button>
 </template>

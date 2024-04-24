@@ -7,13 +7,27 @@ const game = gamesStore.selectedGame;
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <span> Title: {{ game?.title }} </span>
-    <span> Release date: {{ game?.releaseDate }} </span>
-    <span> Genres: {{ game?.genres.join(', ') }} </span>
-    <span> Platforms: {{ game?.platforms.join(', ') }} </span>
-    <span> Summary: {{ game?.summary }} </span>
-    <span> User rating: {{ game?.userRating || '' }} </span>
-    <span> Critic rating: {{ game?.criticRating || '' }} </span>
+  <div class="grid grid-cols-3 gap-4">
+    <h1 class="col-span-full text-2xl font-bold text-center">
+      {{ game?.title }}
+    </h1>
+
+    <span class="font-bold">Release Date:</span>
+    <span class="col-span-2">{{ game?.releaseDate || 'no data' }}</span>
+
+    <span class="font-bold">Genres:</span>
+    <span class="col-span-2">{{ game?.genres.join(', ') || 'no data' }}</span>
+
+    <span class="font-bold">Platforms:</span>
+    <span class="col-span-2">{{ game?.platforms.join(', ') || 'no data' }}</span>
+
+    <span class="font-bold">Summary:</span>
+    <span class="col-span-2">{{ game?.summary || 'no data' }}</span>
+
+    <span class="font-bold">User Rating:</span>
+    <span class="col-span-2">{{ game?.userRating || 'no data' }}</span>
+
+    <span class="font-bold">Critic Rating:</span>
+    <span class="col-span-2">{{ game?.criticRating || 'no data' }}</span>
   </div>
 </template>

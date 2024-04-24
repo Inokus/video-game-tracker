@@ -50,70 +50,63 @@ const handleAddGame = () => {
 </script>
 
 <template>
-  <form class="grid grid-cols-1 sm:grid-cols-2 gap-4" @submit.prevent="handleAddGame" novalidate>
-    <div class="col-span-full sm:col-span-1">
-      <label for="title">Title</label>
+  <div class="w-full md:w-3/4 lg:w-2/3 h-full mb-12">
+    <form class="grid grid-cols-1 sm:grid-cols-3 gap-4" @submit.prevent="handleAddGame" novalidate>
+      <label for="title" class="text-center sm:text-left">Title</label>
       <input
         type="text"
         name="title"
         id="title"
         autocomplete="off"
         required
-        placeholder="Persona 3"
-        class="w-full"
+        placeholder="Baldur's Gate 3"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.title"
       />
-    </div>
-    <div class="col-span-full sm:col-span-1">
-      <label for="release-date">Release date</label>
+      <label for="release-date" class="text-center sm:text-left">Release date</label>
       <input
         type="date"
         name="release-date"
         id="release-date"
         autocomplete="off"
-        class="w-full"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.releaseDate"
       />
-    </div>
-    <div class="col-span-full">
-      <label for="genres">Genres</label>
+      <label for="genres" class="text-center sm:text-left">Genres</label>
       <input
         type="text"
         name="genres"
         id="genres"
         autocomplete="off"
         placeholder="Role-playing (RPG), Turn-based strategy (TBS), Simulator, Visual Novel"
-        class="w-full"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="genresInput"
       />
-    </div>
-    <div class="col-span-full">
-      <label for="platforms">Platforms</label>
+
+      <label for="platforms" class="text-center sm:text-left">Platforms</label>
       <input
         type="text"
         name="platforms"
         id="platforms"
         autocomplete="off"
-        placeholder="PlayStation 2"
-        class="w-full"
+        placeholder="PC (Microsoft Windows), Mac, PlayStation 5, Xbox Series X|S, Google Stadia"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="platformsInput"
       />
-    </div>
-    <div class="col-span-full">
-      <label for="summary">Summary</label>
+
+      <label for="summary" class="text-center sm:text-left">Summary</label>
       <textarea
         name="summary"
         id="summary"
         cols="30"
         rows="6"
         autocomplete="off"
-        placeholder="Shin Megami Tensei: Persona 3 is a role-playing video game developed by Atlus. In the game, the player takes the role of a male high-school student who joins the Specialized Extracurricular Execution Squad (SEES), a group of students investigating the Dark Hour, a time period between one day and the next that few people are aware of. During the Dark Hour, the player enters Tartarus, a large tower containing Shadows, creatures that feed on the minds of humans. To fight the Shadows, each member of SEES is able to summon a Persona, a manifestation of a person's inner self. In addition to the standard elements of role-playing games, Persona 3 includes elements of simulation games, as the game's protagonist progresses day by day through a school year, making friends and forming relationships that improve the strength of his Personas in battle."
-        class="w-full"
+        placeholder="An ancient evil has returned to Baldur's Gate, intent on devouring it from the inside out. The fate of Faerun lies in your hands. Alone, you may resist. But together, you can overcome."
+        class="sm:col-span-2 px-4 py-2 rounded bg-slate-200 resize-none"
         v-model="activeFormData.summary"
       ></textarea>
-    </div>
-    <div class="col-span-full sm:col-span-1">
-      <label for="userRating">User rating</label>
+
+      <label for="userRating" class="text-center sm:text-left">User rating</label>
       <input
         type="number"
         name="userRating"
@@ -121,13 +114,12 @@ const handleAddGame = () => {
         min="0"
         max="100"
         autocomplete="off"
-        placeholder="92"
-        class="w-full"
+        placeholder="95"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.userRating"
       />
-    </div>
-    <div class="col-span-full sm:col-span-1">
-      <label for="criticRating">Critic rating</label>
+
+      <label for="criticRating" class="text-center sm:text-left">Critic rating</label>
       <input
         type="number"
         name="criticRating"
@@ -135,22 +127,28 @@ const handleAddGame = () => {
         min="0"
         max="100"
         autocomplete="off"
-        placeholder="90"
-        class="w-full"
+        placeholder="95"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.criticRating"
       />
-    </div>
-    <div class="col-span-full">
-      <label for="category">Category</label>
-      <select name="category" id="category" class="w-full" v-model="optionsStore.selectedCategory">
+
+      <label for="category" class="text-center sm:text-left">Category</label>
+      <select
+        name="category"
+        id="category"
+        class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
+        v-model="optionsStore.selectedCategory"
+      >
         <option value="backlog">Backlog</option>
         <option value="completed">Completed</option>
         <option value="wishlist">Wishlist</option>
       </select>
-    </div>
 
-    <div class="col-span-full flex justify-center">
-      <DynamicButton :type="'submit'">Add</DynamicButton>
-    </div>
-  </form>
+      <DynamicButton
+        :type="'submit'"
+        :class="'sm:col-start-2 sm:col-end-3 bg-sky-500 text-slate-900'"
+        >Add</DynamicButton
+      >
+    </form>
+  </div>
 </template>

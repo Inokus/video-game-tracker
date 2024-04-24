@@ -21,28 +21,31 @@ const handleAddGame = () => {
 
 <template>
   <DynamicButton
-    :ariaLabel="'back'"
-    :class="'absolute top-1 left-1 bg-transparent'"
+    :aria-label="'back'"
+    :class="'absolute top-0 left-0 px-2 py-2 bg-transparent shadow-none'"
     @click="gamesStore.deselectGame"
   >
     <ArrowUturnLeftIcon class="w-6 h-6" />
   </DynamicButton>
-  <div class="flex flex-col justify-center items-center gap-8 w-1/2 h-full mx-auto">
-    <GameDetails />
-    <form class="flex items-center gap-4" @submit.prevent="handleAddGame" novalidate>
-      <div>
+  <div class="flex flex-col justify-center items-center md:w-3/4 lg:w-2/3 h-full mx-auto">
+    <div class="overflow-auto">
+      <GameDetails />
+      <form class="grid grid-cols-3 gap-4 w-full mt-4" @submit.prevent="handleAddGame" novalidate>
+        <label for="category" class="font-bold">Category:</label>
         <select
           name="category"
           id="category"
-          aria-label="category"
+          class="col-span-2"
           v-model="optionsStore.selectedCategory"
         >
           <option value="backlog">Backlog</option>
           <option value="completed">Completed</option>
           <option value="wishlist">Wishlist</option>
         </select>
-      </div>
-      <DynamicButton :type="'submit'"> Add </DynamicButton>
-    </form>
+        <DynamicButton :type="'submit'" :class="'col-start-2 col-end-3 bg-sky-500 text-slate-900'"
+          >Add</DynamicButton
+        >
+      </form>
+    </div>
   </div>
 </template>

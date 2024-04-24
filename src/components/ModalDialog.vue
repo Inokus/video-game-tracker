@@ -14,7 +14,7 @@ const emits = defineEmits(['close']);
 
 const modal = ref<HTMLDialogElement | null>(null);
 
-const defaultClasses = 'top-2/4 left-2/4 px-8 py-12 rounded';
+const defaultClasses = 'top-2/4 left-2/4 min-w-fit px-8 py-12 rounded';
 
 const showModal = () => modal.value?.showModal();
 
@@ -29,8 +29,8 @@ defineExpose({ showModal, closeModal });
 <template>
   <dialog ref="modal" :class="[defaultClasses, props.class]">
     <DynamicButton
-      :ariaLabel="'close'"
-      :class="'absolute top-1 right-1 bg-transparent text-red-700'"
+      :aria-label="'close'"
+      :class="'absolute top-0 right-0 px-1 py-1 bg-transparent shadow-none text-red-600'"
       @click="closeModal"
     >
       <XMarkIcon class="w-8 h-8" />
@@ -42,6 +42,9 @@ defineExpose({ showModal, closeModal });
 <style scoped>
 dialog {
   translate: -50% -50%;
+  min-width: 280px;
+  background-color: #94a3b8;
+  color: #0f172a;
 }
 
 dialog::backdrop {

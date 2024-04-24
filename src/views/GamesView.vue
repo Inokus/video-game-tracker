@@ -74,18 +74,23 @@ const handleAllRemoval = () => {
       <div class="flex flex-col items-center gap-4 px-4 py-8 sm:flex-row">
         <input
           type="text"
-          aria-label="search"
+          name="search"
           placeholder="Search"
-          class="w-full h-8 px-4 py-2 rounded sm:flex-1"
+          aria-label="games search"
+          autocomplete="off"
+          class="w-full sm:flex-1 h-8 px-4 py-2 rounded"
           v-model="searchInput"
         />
 
-        <div class="flex gap-2">
-          <DynamicButton :class="''" @click="removalEnabled = !removalEnabled">
+        <div class="flex gap-2 text-slate-50">
+          <DynamicButton
+            :class="removalEnabled ? 'bg-red-600 shadow-inner shadow-red-900' : 'bg-red-500'"
+            @click="removalEnabled = !removalEnabled"
+          >
             <span v-if="!removalEnabled">Enable removal</span>
             <span v-else>Disable removal</span>
           </DynamicButton>
-          <DynamicButton :class="''" @click="showRemovalModal">Remove all</DynamicButton>
+          <DynamicButton :class="'bg-red-600'" @click="showRemovalModal">Remove all</DynamicButton>
         </div>
       </div>
 
@@ -95,46 +100,60 @@ const handleAllRemoval = () => {
         v-if="removalModalVisible"
         @close="removalModalVisible = false"
       >
-        <div class="flex flex-col items-center gap-4">
+        <div class="flex flex-col items-center gap-4 text-center">
           This will remove all games from all categories. Are you sure?
           <div>
-            <DynamicButton class="mr-4" @click="handleAllRemoval">Yes</DynamicButton>
-            <DynamicButton @click="removalModal?.closeModal">No</DynamicButton>
+            <DynamicButton :class="'mr-4 bg-red-600 text-slate-50'" @click="handleAllRemoval"
+              >Confirm</DynamicButton
+            >
+            <DynamicButton :class="'bg-sky-500'" @click="removalModal?.closeModal"
+              >Back</DynamicButton
+            >
           </div>
         </div>
       </ModalDialog>
 
       <div class="flex-1 flex flex-row flex-wrap justify-center items-center gap-4 px-4 py-8">
-        <div class="max-w-min relative" v-for="(game, index) in filteredBySearchGames" :key="index">
+        <div class="relative" v-for="(game, index) in filteredBySearchGames" :key="index">
           <DynamicButton
-            :class="'absolute top-2 right-2 z-10 bg-red-700 text-black '"
-            :ariaLabel="'remove'"
+            :class="'absolute top-2 right-2 z-10 bg-red-600 text-slate-50'"
+            :aria-label="'remove'"
             @click="gamesStore.removeGame(game.title)"
             v-if="removalEnabled"
           >
             <TrashIcon class="w-8 h-8" />
           </DynamicButton>
-          <GameCard :game="game" @click="showDetailsModal(game)" />
+          <GameCard
+            :game="game"
+            tabindex="0"
+            @click="showDetailsModal(game)"
+            @keyup.enter="showDetailsModal(game)"
+          />
         </div>
 
         <ModalDialog
           ref="detailsModal"
+          :class="'w-full h-full md:w-3/4 md:h-3/4 lg:w-2/3 lg:h-2/3'"
           v-if="detailsModalVisible && gamesStore.selectedGame"
           @close="hideDetailsModal"
         >
-          <GameDetails />
-          <div class="flex">
-            <label for="category">Category: </label>
-            <select
-              name="category"
-              id="category"
-              class="w-full"
-              v-model="gamesStore.selectedGame.category"
-            >
-              <option value="backlog">Backlog</option>
-              <option value="completed">Completed</option>
-              <option value="wishlist">Wishlist</option>
-            </select>
+          <div class="flex flex-col justify-center items-center h-full">
+            <div class="overflow-auto">
+              <GameDetails />
+              <div class="grid grid-cols-3 gap-4 mt-4">
+                <label for="category" class="font-bold">Category:</label>
+                <select
+                  name="category"
+                  id="category"
+                  class="col-span-2 rounded"
+                  v-model="gamesStore.selectedGame.category"
+                >
+                  <option value="backlog">Backlog</option>
+                  <option value="completed">Completed</option>
+                  <option value="wishlist">Wishlist</option>
+                </select>
+              </div>
+            </div>
           </div>
         </ModalDialog>
       </div>
