@@ -47,7 +47,7 @@ onMounted(() => {
         <Bars3Icon class="w-6 h-6" />
       </DynamicButton>
       <nav
-        class="gap-2 sm:gap-4 text-slate-50"
+        class="gap-2 sm:gap-4 text-slate-50 underline"
         :class="{
           'hidden sm:flex': !isMenuOpen,
           'flex flex-col sm:flex-row absolute sm:static top-16 left-0 px-4 sm:px-0 pt-1 pb-4 sm:py-0 rounded-br bg-slate-800 sm:bg-transparent':
@@ -87,5 +87,10 @@ onMounted(() => {
 <style scoped>
 main {
   min-height: calc(100vh - 4rem);
+}
+
+a:hover {
+  opacity: 0.9;
+  scale: 1.05;
 }
 </style>
