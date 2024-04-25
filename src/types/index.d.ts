@@ -2,6 +2,8 @@ type Category = 'backlog' | 'completed' | 'wishlist';
 
 type Mode = 'auto' | 'manual';
 
+type ErrorType = 'user' | 'internal';
+
 type Game = {
   title: string;
   releaseDate: string;
@@ -32,4 +34,4 @@ type ResponseGenreOrPlatform = {
   name: string;
 };
 
-export { Category, Mode, Game, ResponseGame, ResponseGenreOrPlatform };
+export { Category, Mode, ErrorType, Game, ResponseGame, ResponseGenreOrPlatform };

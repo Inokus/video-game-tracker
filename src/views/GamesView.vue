@@ -2,11 +2,13 @@
 import { ref, computed } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/outline';
 import useGamesStore from '../stores/games';
+import useErrorsStore from '../stores/errors';
 import GameCard from '../components/GameCard.vue';
 import GameDetails from '../components/GameDetails.vue';
 import ModalDialog from '../components/ModalDialog.vue';
 import DynamicButton from '../components/DynamicButton.vue';
-import type { Game } from '../types/index';
+import InternalError from '../components/InternalError.vue';
+import type { Game, Category } from '../types/index';
 
 const props = defineProps({
   category: {
@@ -16,6 +18,7 @@ const props = defineProps({
 });
 
 const gamesStore = useGamesStore();
+const errorsStore = useErrorsStore();
 
 const searchInput = ref('');
 const removalEnabled = ref(false);
@@ -23,6 +26,7 @@ const removalModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const removalModalVisible = ref(false);
 const detailsModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const detailsModalVisible = ref(false);
+const selectedCategory = ref<Category>('backlog');
 
 const selectedGames = computed(() => {
   switch (props.category) {
@@ -62,9 +66,24 @@ const hideDetailsModal = () => {
   detailsModalVisible.value = false;
 };
 
+const handleRemoval = (title: string) => {
+  errorsStore.currentSource = 'gamesRemove';
+  gamesStore.removeGame(title);
+};
+
 const handleAllRemoval = () => {
+  errorsStore.currentSource = 'gamesRemoveModal';
   gamesStore.removeAllGames();
-  removalModal.value?.closeModal();
+  if (!errorsStore.isActiveError('internal', 'updatingStorage')) {
+    removalModal.value?.closeModal();
+  }
+};
+
+const handleCategoryUpdate = () => {
+  errorsStore.currentSource = 'gamesCategoryUpdate';
+  if (gamesStore.selectedGame) {
+    gamesStore.selectedGame.category = selectedCategory.value;
+  }
 };
 </script>
 
@@ -111,6 +130,14 @@ const handleAllRemoval = () => {
             >
           </div>
         </div>
+        <InternalError
+          :message="'Internal error has occured when updating local storage data.'"
+          :error="'updatingStorage'"
+          v-if="
+            errorsStore.isActiveError('internal', 'updatingStorage') &&
+            errorsStore.currentSource === 'gamesRemoveModal'
+          "
+        />
       </ModalDialog>
 
       <div class="flex-1 flex flex-row flex-wrap justify-center items-center gap-4 px-4 py-8">
@@ -118,7 +145,7 @@ const handleAllRemoval = () => {
           <DynamicButton
             :class="'absolute top-2 right-2 z-10 bg-red-600 text-slate-50'"
             :aria-label="'remove'"
-            @click="gamesStore.removeGame(game.title)"
+            @click="handleRemoval(game.title)"
             v-if="removalEnabled"
           >
             <TrashIcon class="w-8 h-8" />
@@ -146,17 +173,42 @@ const handleAllRemoval = () => {
                   name="category"
                   id="category"
                   class="col-span-2 rounded"
-                  v-model="gamesStore.selectedGame.category"
+                  @change="handleCategoryUpdate"
+                  v-model="selectedCategory"
                 >
                   <option value="backlog">Backlog</option>
-                  <option value="completed">Completed</option>
+                  <option
+                    value="completed"
+                    v-if="
+                      gamesStore.selectedGame.releaseDate &&
+                      new Date(gamesStore.selectedGame.releaseDate) <= gamesStore.currentDate
+                    "
+                  >
+                    Completed
+                  </option>
                   <option value="wishlist">Wishlist</option>
                 </select>
               </div>
+              <InternalError
+                :message="'Internal error has occured when updating local storage data.'"
+                :error="'updatingStorage'"
+                v-if="
+                  errorsStore.isActiveError('internal', 'updatingStorage') &&
+                  errorsStore.currentSource === 'gamesCategoryUpdate'
+                "
+              />
             </div>
           </div>
         </ModalDialog>
       </div>
+      <InternalError
+        :message="'Internal error has occured when updating local storage data.'"
+        :error="'updatingStorage'"
+        v-if="
+          errorsStore.isActiveError('internal', 'updatingStorage') &&
+          errorsStore.currentSource === 'gamesRemove'
+        "
+      />
     </div>
     <div class="flex-1 flex justify-center items-center" v-else>
       There are no games currently added in {{ props.category }} category.

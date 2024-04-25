@@ -5,6 +5,11 @@ import { HomeIcon, Bars3Icon } from '@heroicons/vue/24/outline';
 import useGamesStore from './stores/games';
 import GameAddition from './components/GameAddition.vue';
 import DynamicButton from './components/DynamicButton.vue';
+import InternalError from './components/InternalError.vue';
+import useErrorsStore from './stores/errors';
+
+const errorsStore = useErrorsStore();
+errorsStore.currentSource = 'app';
 
 useGamesStore();
 
@@ -63,6 +68,19 @@ onMounted(() => {
   </header>
   <main class="relative top-16 flex-1 flex flex-col bg-slate-400">
     <RouterView />
+    <InternalError
+      :message="'Internal error has occured when getting local storage data.'"
+      :error="'gettingStorage'"
+      v-if="errorsStore.isActiveError('internal', 'gettingStorage')"
+    />
+    <InternalError
+      :message="'Internal error has occured when updating local storage data.'"
+      :error="'updatingStorage'"
+      v-else-if="
+        errorsStore.isActiveError('internal', 'updatingStorage') &&
+        errorsStore.currentSource === 'app'
+      "
+    />
   </main>
 </template>
 

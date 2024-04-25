@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import { XMarkIcon } from '@heroicons/vue/24/outline';
 import DynamicButton from './DynamicButton.vue';
+import useErrorsStore from '../stores/errors';
 
 const props = defineProps({
   class: {
@@ -12,13 +13,21 @@ const props = defineProps({
 
 const emits = defineEmits(['close']);
 
+const errorsStore = useErrorsStore();
+
 const modal = ref<HTMLDialogElement | null>(null);
 
 const defaultClasses = 'top-2/4 left-2/4 min-w-fit px-8 py-12 rounded';
 
-const showModal = () => modal.value?.showModal();
+const showModal = () => {
+  errorsStore.removeAllErrors('user');
+  errorsStore.removeAllErrors('internal');
+  modal.value?.showModal();
+};
 
 const closeModal = () => {
+  errorsStore.removeAllErrors('user');
+  errorsStore.removeAllErrors('internal');
   modal.value?.close();
   emits('close');
 };

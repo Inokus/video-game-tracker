@@ -1,11 +1,16 @@
 import { defineStore } from 'pinia';
 import { ref, computed, watch } from 'vue';
 import type { Game, Category } from '../types/index';
+import useErrorsStore from './errors';
 
 const useGamesStore = defineStore('games', () => {
+  const errorsStore = useErrorsStore();
+
   const storedGames = ref<Game[] | null>(null);
+  const lastSearchInput = ref<string>('');
   const searchResults = ref<Game[] | null>(null);
   const selectedGame = ref<Game | null>(null);
+  const currentDate = new Date();
 
   const getStorage = () => {
     try {
@@ -13,7 +18,7 @@ const useGamesStore = defineStore('games', () => {
       storedGames.value = gamesData ? JSON.parse(gamesData) : [];
     } catch {
       storedGames.value = [];
-      console.error(`Something went wrong when getting games data from local storage.`);
+      errorsStore.addError('internal', 'gettingStorage');
     }
   };
 
@@ -22,7 +27,7 @@ const useGamesStore = defineStore('games', () => {
       const gamesData = JSON.stringify(storedGames.value);
       localStorage.setItem('games', gamesData);
     } catch {
-      console.error(`Something went wrong when storing games data to local storage.`);
+      errorsStore.addError('internal', 'updatingStorage');
     }
   };
 
@@ -36,8 +41,6 @@ const useGamesStore = defineStore('games', () => {
 
   const isNewGame = (game: Game): boolean => {
     if (storedGames.value?.some(storedGame => game.title === storedGame.title)) {
-      // Inform user why game was not added
-      console.error('Game already exists');
       return false;
     }
     return true;
@@ -72,11 +75,13 @@ const useGamesStore = defineStore('games', () => {
 
   return {
     storedGames,
+    lastSearchInput,
     searchResults,
     selectedGame,
     backlogGames,
     completedGames,
     wishlistGames,
+    currentDate,
     selectGame,
     deselectGame,
     isNewGame,

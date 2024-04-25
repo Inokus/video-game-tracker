@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { PlusIcon } from '@heroicons/vue/24/outline';
 import useGamesStore from '../stores/games';
 import useOptionsStore from '../stores/options';
+import useErrorsStore from '../stores/errors';
 import GameSearch from './GameSearch.vue';
 import AutoAdditionForm from './AutoAdditionForm.vue';
 import ManualAdditionForm from './ManualAdditionForm.vue';
@@ -11,6 +12,7 @@ import DynamicButton from './DynamicButton.vue';
 
 const gamesStore = useGamesStore();
 const optionsStore = useOptionsStore();
+const errorsStore = useErrorsStore();
 
 const gameAdditionModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const gameAdditionModalVisible = ref(false);
@@ -52,6 +54,7 @@ const hideGameAdditionModal = () => {
             value="auto"
             id="auto"
             class="mr-2 accent-sky-500"
+            @click="errorsStore.removeAllErrors('user')"
             v-model="optionsStore.selectedMode"
           />
           <label for="auto">Auto</label>
@@ -63,6 +66,7 @@ const hideGameAdditionModal = () => {
             value="manual"
             id="manual"
             class="mr-2 accent-sky-500"
+            @click="errorsStore.removeAllErrors('user')"
             v-model="optionsStore.selectedMode"
           />
           <label for="manual">Manual</label>

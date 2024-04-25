@@ -3,27 +3,32 @@ import { ref, computed } from 'vue';
 import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
 import type { Game, ResponseGame, ResponseGenreOrPlatform } from '../types/index';
 import useGamesStore from '../stores/games';
+import useErrorsStore from '../stores/errors';
 import GameCard from './GameCard.vue';
 import DynamicButton from './DynamicButton.vue';
+import UserError from './UserError.vue';
+import InternalError from './InternalError.vue';
 
 const gamesStore = useGamesStore();
+const errorsStore = useErrorsStore();
 
 const searchInput = ref('');
+const sanitizedInput = ref('');
 
 const igdbUrl = 'https://api.tevas.xyz/igdb/v4/games';
 
 const sanitizeInput = (input: string): string => {
-  let sanitizedInput = input.trim();
+  let sanitized = input.trim();
   // Remove backslashes and double quotes
-  sanitizedInput = sanitizedInput.replace(/[\\"]/g, '');
+  sanitized = sanitized.replace(/[\\"]/g, '');
   // Remove additional whitespace between words
-  return sanitizedInput.replace(/\s+/g, ' ');
+  return sanitized.replace(/\s+/g, ' ');
 };
 
 const requestData = computed(() => {
   return {
     method: 'POST',
-    body: `fields aggregated_rating, category, cover.url, first_release_date, genres.name, name, platforms.name, rating, summary; search "${sanitizeInput(searchInput.value)}"; where (category = (0, 2, 4, 8, 9, 10) & version_parent = null); limit 10;`
+    body: `fields aggregated_rating, category, cover.url, first_release_date, genres.name, name, platforms.name, rating, summary; search "${sanitizedInput.value}"; where (category = (0, 2, 4, 8, 9, 10) & version_parent = null); limit 10;`
   };
 });
 
@@ -72,7 +77,27 @@ const formatResults = (results: ResponseGame[]) => {
   return formattedResults;
 };
 
+const hasActiveErrors = (): boolean => {
+  errorsStore.removeAllErrors('user');
+
+  sanitizedInput.value = sanitizeInput(searchInput.value);
+
+  if (sanitizedInput.value.length < 2) {
+    errorsStore.addError('user', 'shortSearch');
+    return true;
+  }
+
+  if (sanitizedInput.value === gamesStore.lastSearchInput) {
+    errorsStore.addError('user', 'sameSearch');
+    return true;
+  }
+
+  gamesStore.lastSearchInput = sanitizedInput.value;
+  return false;
+};
+
 async function getResults() {
+  if (hasActiveErrors()) return;
   try {
     const response = await fetch(igdbUrl, requestData.value);
 
@@ -86,7 +111,7 @@ async function getResults() {
 
     gamesStore.searchResults = formatResults(data);
   } catch (error) {
-    console.error(`${error}`);
+    errorsStore.addError('internal', 'fetchingData');
   }
 }
 </script>
@@ -112,6 +137,20 @@ async function getResults() {
       <MagnifyingGlassIcon class="w-6 h-6 text-slate-900" />
     </DynamicButton>
   </form>
+  <UserError
+    :message="'Search query too short. Please make sure to enter at least 2 valid characters.'"
+    :error="'shortSearch'"
+    v-if="errorsStore.isActiveError('user', 'shortSearch')"
+  />
+  <UserError
+    :message="'Please enter different search query.'"
+    v-if="errorsStore.isActiveError('user', 'sameSearch')"
+  />
+  <InternalError
+    :message="'Internal error has occured when fetching data.'"
+    :error="'fetchingData'"
+    v-if="errorsStore.isActiveError('internal', 'fetchingData')"
+  />
   <div
     class="flex-1 flex flex-wrap justify-center items-center gap-4 mt-8 mb-12"
     v-if="gamesStore.searchResults && gamesStore.searchResults.length > 0"

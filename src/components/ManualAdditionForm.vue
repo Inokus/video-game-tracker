@@ -2,11 +2,13 @@
 import { ref } from 'vue';
 import type { Game } from '../types/index';
 import useGamesStore from '../stores/games';
-import useOptionsStore from '../stores/options';
+import useErrorsStore from '../stores/errors';
 import DynamicButton from './DynamicButton.vue';
+import UserError from './UserError.vue';
+import InternalError from './InternalError.vue';
 
 const gamesStore = useGamesStore();
-const optionsStore = useOptionsStore();
+const errorsStore = useErrorsStore();
 
 const initialFormData: Game = {
   title: '',
@@ -30,7 +32,6 @@ const formatData = (): void => {
   const newData = { ...activeFormData.value };
   newData.genres = genresInput.value.split(',').map(genre => genre.trim());
   newData.platforms = platformsInput.value.split(',').map(platform => platform.trim());
-  newData.category = optionsStore.selectedCategory;
   activeFormData.value = newData;
 };
 
@@ -40,10 +41,62 @@ const resetForm = () => {
   platformsInput.value = '';
 };
 
-const handleAddGame = () => {
+const hasActiveErrors = (): boolean => {
   formatData();
-  if (gamesStore.isNewGame(activeFormData.value)) {
-    gamesStore.addGame(activeFormData.value);
+  errorsStore.removeAllErrors('user');
+
+  if (!gamesStore.isNewGame(activeFormData.value)) {
+    errorsStore.addError('user', 'gameExists');
+    return true;
+  }
+
+  if (activeFormData.value.title.length < 2) {
+    errorsStore.addError('user', 'shortTitle');
+    return true;
+  }
+
+  if (activeFormData.value.userRating < 0) {
+    errorsStore.addError('user', 'negativeUserRating');
+    return true;
+  }
+
+  if (activeFormData.value.userRating > 100) {
+    errorsStore.addError('user', 'highUserRating');
+    return true;
+  }
+
+  if (activeFormData.value.criticRating < 0) {
+    errorsStore.addError('user', 'negativeCriticRating');
+    return true;
+  }
+
+  if (activeFormData.value.criticRating > 100) {
+    errorsStore.addError('user', 'highCriticRating');
+    return true;
+  }
+
+  if (
+    activeFormData.value.releaseDate &&
+    new Date(activeFormData.value.releaseDate) > gamesStore.currentDate &&
+    activeFormData.value.category === 'completed'
+  ) {
+    errorsStore.addError('user', 'futureReleaseCompleted');
+    return true;
+  }
+  return false;
+};
+
+const handleAddGame = async () => {
+  if (hasActiveErrors()) return;
+
+  errorsStore.currentSource = 'manualAddition';
+  gamesStore.addGame(activeFormData.value);
+
+  await setTimeout(() => {}, 0);
+
+  if (errorsStore.isActiveError('internal', 'updatingStorage')) {
+    gamesStore.removeGame(activeFormData.value.title);
+  } else {
     resetForm();
   }
 };
@@ -63,6 +116,19 @@ const handleAddGame = () => {
         class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.title"
       />
+      <p class="col-span-full text-center">
+        <UserError
+          :message="'Game with this title already exists.'"
+          :error="'gameExists'"
+          v-if="errorsStore.isActiveError('user', 'gameExists')"
+        />
+        <UserError
+          :message="'Title too short, it must have at least 2 characters.'"
+          :error="'shortTitle'"
+          v-if="errorsStore.isActiveError('user', 'shortTitle')"
+        />
+      </p>
+
       <label for="release-date" class="text-center sm:text-left">Release date</label>
       <input
         type="date"
@@ -72,6 +138,7 @@ const handleAddGame = () => {
         class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.releaseDate"
       />
+
       <label for="genres" class="text-center sm:text-left">Genres</label>
       <input
         type="text"
@@ -118,6 +185,18 @@ const handleAddGame = () => {
         class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.userRating"
       />
+      <p class="col-span-full text-center">
+        <UserError
+          :message="'User rating value can\'t be negative.'"
+          :error="'negativeUserRating'"
+          v-if="errorsStore.isActiveError('user', 'negativeUserRating')"
+        />
+        <UserError
+          :message="'User rating value can\'t exceed 100.'"
+          :error="'highUserRating'"
+          v-if="errorsStore.isActiveError('user', 'highUserRating')"
+        />
+      </p>
 
       <label for="criticRating" class="text-center sm:text-left">Critic rating</label>
       <input
@@ -131,18 +210,37 @@ const handleAddGame = () => {
         class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
         v-model="activeFormData.criticRating"
       />
+      <p class="col-span-full text-center">
+        <UserError
+          :message="'Critic rating value can\'t be negative.'"
+          :error="'negativeCriticRating'"
+          v-if="errorsStore.isActiveError('user', 'negativeCriticRating')"
+        />
+        <UserError
+          :message="'Critic rating value can\'t exceed 100.'"
+          :error="'highCriticRating'"
+          v-if="errorsStore.isActiveError('user', 'highCriticRating')"
+        />
+      </p>
 
       <label for="category" class="text-center sm:text-left">Category</label>
       <select
         name="category"
         id="category"
         class="sm:col-span-2 h-8 px-4 rounded bg-slate-200"
-        v-model="optionsStore.selectedCategory"
+        v-model="activeFormData.category"
       >
         <option value="backlog">Backlog</option>
         <option value="completed">Completed</option>
         <option value="wishlist">Wishlist</option>
       </select>
+      <p class="col-span-full text-center">
+        <UserError
+          :message="'Selecting completed category for not yet released games is not allowed.'"
+          :error="'futureReleaseCompleted'"
+          v-if="errorsStore.isActiveError('user', 'futureReleaseCompleted')"
+        />
+      </p>
 
       <DynamicButton
         :type="'submit'"
@@ -150,5 +248,13 @@ const handleAddGame = () => {
         >Add</DynamicButton
       >
     </form>
+    <InternalError
+      :message="'Internal error has occured when updating local storage data.'"
+      :error="'updatingStorage'"
+      v-if="
+        errorsStore.isActiveError('internal', 'updatingStorage') &&
+        errorsStore.currentSource === 'manualAddition'
+      "
+    />
   </div>
 </template>
