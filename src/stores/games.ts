@@ -65,7 +65,14 @@ const useGamesStore = defineStore('games', () => {
     return storedGames.value?.filter(game => game.category === category);
   };
 
-  watch(storedGames, () => updateStorage(), { deep: true });
+  watch(
+    storedGames,
+    () => {
+      storedGames.value?.sort((a, b) => a.title.localeCompare(b.title));
+      updateStorage();
+    },
+    { deep: true }
+  );
 
   getStorage();
 
