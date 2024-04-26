@@ -9,7 +9,7 @@ const gamesStore = useGamesStore();
     <div
       class="flex flex-col justify-center items-center gap-8 w-full h-full md:w-3/4 md:h-3/4 lg:w-2/3 lg:h-2/3 px-8 py-12"
     >
-      <h1 class="text-3xl font-bold text-center">Video game tracker</h1>
+      <h1 class="text-3xl font-bold text-center">Video Game Tracker</h1>
       <p class="text-lg">Total games added: {{ gamesStore.storedGames?.length }}</p>
       <div class="flex flex-col sm:flex-row gap-8 text-lg">
         <p>Backlog: {{ gamesStore.backlogGames?.length }}</p>
