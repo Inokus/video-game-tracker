@@ -143,7 +143,7 @@ const handleCategoryUpdate = () => {
       <div class="flex-1 flex flex-row flex-wrap justify-center items-center gap-4 px-4 py-8">
         <div class="relative" v-for="(game, index) in filteredBySearchGames" :key="index">
           <DynamicButton
-            :class="'absolute top-2 right-2 z-10 bg-red-600 text-slate-50'"
+            :class="'absolute top-2 right-2 z-10 bg-red-600 text-slate-50 hover:scale-95'"
             :aria-label="'remove'"
             @click="handleRemoval(game.title)"
             v-if="removalEnabled"
@@ -153,6 +153,7 @@ const handleCategoryUpdate = () => {
           <GameCard
             :game="game"
             tabindex="0"
+            :class="{ 'hover:scale-95': !removalEnabled }"
             @click="showDetailsModal(game)"
             @keyup.enter="showDetailsModal(game)"
           />
