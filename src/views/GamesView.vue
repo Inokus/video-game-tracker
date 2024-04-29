@@ -115,7 +115,9 @@ const handleAllRemoval = () => {
         @close="removalModalVisible = false"
       >
         <div class="flex flex-col items-center gap-4 text-center">
-          This will remove all games from all categories. Are you sure?
+          <strong class="text-red-600"
+            >This will remove all games from all categories. Are you sure?</strong
+          >
           <div>
             <DynamicButton :class="'mr-4 bg-red-600 text-slate-50'" @click="handleAllRemoval"
               >Confirm</DynamicButton
