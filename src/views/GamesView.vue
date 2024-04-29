@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { TrashIcon } from '@heroicons/vue/24/outline';
 import useGamesStore from '../stores/games';
 import useErrorsStore from '../stores/errors';
+import useOptionsStore from '../stores/options';
 import GameCard from '../components/GameCard.vue';
 import GameDetails from '../components/GameDetails.vue';
 import ModalDialog from '../components/ModalDialog.vue';
@@ -18,10 +19,10 @@ const props = defineProps({
 });
 
 const gamesStore = useGamesStore();
+const optionsStore = useOptionsStore();
 const errorsStore = useErrorsStore();
 
 const searchInput = ref('');
-const removalEnabled = ref(false);
 const removalModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const removalModalVisible = ref(false);
 const detailsModal = ref<InstanceType<typeof ModalDialog> | null>(null);
@@ -95,10 +96,12 @@ const handleAllRemoval = () => {
 
         <div class="flex gap-2 text-slate-50">
           <DynamicButton
-            :class="removalEnabled ? 'bg-red-600 shadow-inner shadow-red-900' : 'bg-red-500'"
-            @click="removalEnabled = !removalEnabled"
+            :class="
+              optionsStore.removalEnabled ? 'bg-red-600 shadow-inner shadow-red-900' : 'bg-red-500'
+            "
+            @click="optionsStore.removalEnabled = !optionsStore.removalEnabled"
           >
-            <span v-if="!removalEnabled">Enable removal</span>
+            <span v-if="!optionsStore.removalEnabled">Enable removal</span>
             <span v-else>Disable removal</span>
           </DynamicButton>
           <DynamicButton :class="'bg-red-600'" @click="showRemovalModal">Remove all</DynamicButton>
@@ -138,14 +141,14 @@ const handleAllRemoval = () => {
             :class="'absolute top-2 right-2 z-10 bg-red-600 text-slate-50 hover:scale-95'"
             :aria-label="'remove'"
             @click="handleRemoval(game.title)"
-            v-if="removalEnabled"
+            v-if="optionsStore.removalEnabled"
           >
             <TrashIcon class="w-8 h-8" />
           </DynamicButton>
           <GameCard
             :game="game"
             tabindex="0"
-            :class="{ 'hover:scale-95': !removalEnabled }"
+            :class="{ 'hover:scale-95': !optionsStore.removalEnabled }"
             @click="showDetailsModal(game)"
             @keyup.enter="showDetailsModal(game)"
           />

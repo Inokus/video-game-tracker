@@ -18,6 +18,7 @@ const gameAdditionModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const gameAdditionModalVisible = ref(false);
 
 const showGameAdditionModal = () => {
+  optionsStore.removalEnabled = false;
   gameAdditionModalVisible.value = true;
   setTimeout(() => {
     gameAdditionModal.value?.showModal();
