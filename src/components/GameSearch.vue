@@ -12,7 +12,6 @@ import InternalError from './InternalError.vue';
 const gamesStore = useGamesStore();
 const errorsStore = useErrorsStore();
 
-const searchInput = ref('');
 const sanitizedInput = ref('');
 
 const igdbUrl = 'https://api.tevas.xyz/igdb/v4/games';
@@ -80,7 +79,7 @@ const formatResults = (results: ResponseGame[]) => {
 const hasActiveErrors = (): boolean => {
   errorsStore.removeAllErrors('user');
 
-  sanitizedInput.value = sanitizeInput(searchInput.value);
+  sanitizedInput.value = sanitizeInput(gamesStore.searchInput);
 
   if (sanitizedInput.value.length < 2) {
     errorsStore.addError('user', 'shortSearch');
@@ -127,7 +126,7 @@ async function getResults() {
       aria-label="games search"
       required
       class="h-8 px-4 py-2 rounded-l bg-slate-200"
-      v-model="searchInput"
+      v-model="gamesStore.searchInput"
     />
     <DynamicButton
       :type="'submit'"

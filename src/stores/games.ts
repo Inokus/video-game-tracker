@@ -7,6 +7,7 @@ const useGamesStore = defineStore('games', () => {
   const errorsStore = useErrorsStore();
 
   const storedGames = ref<Game[] | null>(null);
+  const searchInput = ref<string>('');
   const lastSearchInput = ref<string>('');
   const searchResults = ref<Game[] | null>(null);
   const selectedGame = ref<Game | null>(null);
@@ -82,6 +83,7 @@ const useGamesStore = defineStore('games', () => {
 
   return {
     storedGames,
+    searchInput,
     lastSearchInput,
     searchResults,
     selectedGame,

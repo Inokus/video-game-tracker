@@ -8,7 +8,7 @@ import GameDetails from '../components/GameDetails.vue';
 import ModalDialog from '../components/ModalDialog.vue';
 import DynamicButton from '../components/DynamicButton.vue';
 import InternalError from '../components/InternalError.vue';
-import type { Game, Category } from '../types/index';
+import type { Game } from '../types/index';
 
 const props = defineProps({
   category: {
@@ -26,7 +26,6 @@ const removalModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const removalModalVisible = ref(false);
 const detailsModal = ref<InstanceType<typeof ModalDialog> | null>(null);
 const detailsModalVisible = ref(false);
-const selectedCategory = ref<Category>('backlog');
 
 const selectedGames = computed(() => {
   switch (props.category) {
@@ -76,13 +75,6 @@ const handleAllRemoval = () => {
   gamesStore.removeAllGames();
   if (!errorsStore.isActiveError('internal', 'updatingStorage')) {
     removalModal.value?.closeModal();
-  }
-};
-
-const handleCategoryUpdate = () => {
-  errorsStore.currentSource = 'gamesCategoryUpdate';
-  if (gamesStore.selectedGame) {
-    gamesStore.selectedGame.category = selectedCategory.value;
   }
 };
 </script>
@@ -174,8 +166,8 @@ const handleCategoryUpdate = () => {
                   name="category"
                   id="category"
                   class="col-span-2 rounded"
-                  @change="handleCategoryUpdate"
-                  v-model="selectedCategory"
+                  @change="errorsStore.currentSource = 'gamesCategoryUpdate'"
+                  v-model="gamesStore.selectedGame.category"
                 >
                   <option value="backlog">Backlog</option>
                   <option
